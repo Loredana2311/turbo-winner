@@ -1,0 +1,134 @@
+openapi: 3.0.3
+info:
+  title: Massage Platform API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000/api
+paths:
+  /services:
+    get:
+      summary: List available services
+      responses:
+        '200':
+          description: A JSON array of service objects
+  /services/{id}:
+    get:
+      summary: Get a single service by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A service object
+  /therapists:
+    get:
+      summary: List therapists
+      responses:
+        '200':
+          description: A JSON array of therapist objects
+  /therapists/{id}:
+    get:
+      summary: Get a single therapist by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A therapist object
+  /appointments:
+    post:
+      summary: Book an appointment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: integer
+                service_id:
+                  type: integer
+                therapist_id:
+                  type: integer
+                starts_at:
+                  type: string
+                  format: date-time
+      responses:
+        '201':
+          description: Appointment created
+  /checkout/session:
+    post:
+      summary: Create a Stripe checkout session for an appointment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                appointment_id:
+                  type: integer
+      responses:
+        '200':
+          description: Session created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sessionId:
+                    type: string
+components:
+  schemas:
+    Service:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        duration:
+          type: integer
+        price:
+          type: number
+          format: float
+    Therapist:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+    Appointment:
+      type: object
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+        service_id:
+          type: integer
+        therapist_id:
+          type: integer
+        starts_at:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum:
+            - pending
+            - confirmed
+            - cancelled
+            - completed
